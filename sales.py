@@ -130,7 +130,7 @@ def display_kpis(kpis):
     with col2:
         st.metric("📊 Avg Profit", f"${kpis['average_profit']:,.2f}")
     with col3:
-        st.metric("📦 Avg Quantity", f"{kpis['average_quantity']:,}")
+        st.metric("📦 Avg Quantity", f"{kpis['average_quantity']:,.0f}")
     with col4:
         st.metric("🛒 Total Orders", f"{kpis['total_orders']:,}")
 
