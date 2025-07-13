@@ -130,7 +130,7 @@ def display_kpis(kpis):
     with col2:
         st.metric("📊 Avg Profit", f"${kpis['average_profit']:,.2f}")
     with col3:
-        st.metric("📦 Avg Quantity", f"{kpis['average_quantity']:,.0f}")
+        st.metric("📦 Avg Quantity", f"{kpis['average_quantity']:,}")
     with col4:
         st.metric("🛒 Total Orders", f"{kpis['total_orders']:,}")
 
@@ -225,25 +225,30 @@ def create_visualizations(df):
 def main():
     st.markdown("""
     <div class="main-header">
-        <h1>💳 Banking Analytics Dashboard</h1>
-        <p>Analyze banking data, customer behavior, and financial transactions.</p>
+        <h1>Sales Analytics Dashboard</h1>
+        <p>Analyze sales trends, customer behavior, and transaction insights.</p>
     </div>
     """, unsafe_allow_html=True)
 
-    filtered_df = apply_filters(df)
-    st.success(f"📋 Showing {len(filtered_df):,} customers out of {len(df):,} total customers")
+    filtered_df = apply_filters(df)  # Applying filters to the data
+    st.success(f"📋 Showing {len(filtered_df):,} orders out of {len(df):,} total orders")
 
-    kpis = calculate_kpis(filtered_df)
-    display_kpis(kpis)
+    kpis = calculate_kpis(filtered_df)  # Calculating key performance indicators
+    display_kpis(kpis)  # Displaying KPIs
 
     st.markdown("---")
+    
+    # Download options for filtered and full datasets
     col1, col2, col3 = st.columns([1, 1, 2])
     with col1:
         if len(filtered_df) > 0:
-            st.download_button("📥 Download Filtered Data", filtered_df.to_csv(index=False).encode('utf-8'), file_name=f'banking_data_filtered_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv', mime='text/csv')
+            st.download_button("📥 Download Filtered Data", filtered_df.to_csv(index=False).encode('utf-8'),
+                               file_name=f'sales_data_filtered_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv', mime='text/csv')
     with col2:
-        st.download_button("📥 Download Full Dataset", df.to_csv(index=False).encode('utf-8'), file_name=f'banking_data_full_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv', mime='text/csv')
+        st.download_button("📥 Download Full Dataset", df.to_csv(index=False).encode('utf-8'),
+                           file_name=f'sales_data_full_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv', mime='text/csv')
 
+    # Displaying raw data option
     if st.sidebar.checkbox("Show Raw Data"):
         st.markdown("### 📄 Raw Data Preview")
         if len(filtered_df) > 0:
@@ -251,8 +256,9 @@ def main():
         else:
             st.info("No data to display with current filters")
 
+    # Visualizations based on filtered data
     if len(filtered_df) > 0:
-        create_visualizations(filtered_df)
+        create_visualizations(filtered_df)  # Creating visualizations
     else:
         st.warning("⚠️ No data available with current filters.")
 
@@ -267,9 +273,11 @@ def main():
         st.info(f"**Memory Usage:** {filtered_df.memory_usage(deep=True).sum() / 1024**2:.2f} MB")
 
     st.markdown("---")
-    st.markdown("""<div style="text-align: center; color: #666; margin-top: 2rem;">
+    st.markdown("""
+    <div style="text-align: center; color: #666; margin-top: 2rem;">
         <p>Sales Analytics Dashboard v1.0</p>
-    </div>""", unsafe_allow_html=True)
+    </div>
+    """, unsafe_allow_html=True)
 
 # Run
 if __name__ == "__main__":
