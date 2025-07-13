@@ -78,19 +78,15 @@ st.title("Sales Analytics Dashboard")
 def apply_filters(df):
     st.sidebar.header("🔧 Filter Options")
     
-    # Region Filter
     region_options = ['All'] + sorted(df['Region'].unique().tolist())
     selected_region = st.sidebar.multiselect("Region:", options=region_options, default=['All'])
     
-    # Category Filter
     category_options = ['All'] + sorted(df['Category'].unique().tolist())
     selected_category = st.sidebar.multiselect("Category:", options=category_options, default=['All'])
     
-    # Payment Method Filter
     payment_options = ['All'] + sorted(df['Payment Method'].unique().tolist())
     selected_payment = st.sidebar.multiselect("Payment Method:", options=payment_options, default=['All'])
     
-    # Customer Segment Filter
     segment_options = ['All'] + sorted(df['Customer Segment'].unique().tolist())
     selected_segment = st.sidebar.multiselect("Customer Segment:", options=segment_options, default=['All'])
     
@@ -227,10 +223,15 @@ def create_visualizations(df):
 
 # Main function
 def main():
-    st.markdown("""<div class="main-header"><h1>📊 Sales Analytics Dashboard</h1><p>Analyze sales trends, customer behavior, and profit margins.</p></div>""", unsafe_allow_html=True)
+    st.markdown("""
+    <div class="main-header">
+        <h1>💳 Banking Analytics Dashboard</h1>
+        <p>Analyze banking data, customer behavior, and financial transactions.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
     filtered_df = apply_filters(df)
-    st.success(f"📋 Showing {len(filtered_df):,} orders out of {len(df):,} total orders")
+    st.success(f"📋 Showing {len(filtered_df):,} customers out of {len(df):,} total customers")
 
     kpis = calculate_kpis(filtered_df)
     display_kpis(kpis)
@@ -239,9 +240,16 @@ def main():
     col1, col2, col3 = st.columns([1, 1, 2])
     with col1:
         if len(filtered_df) > 0:
-            st.download_button("📥 Download Filtered Data", filtered_df.to_csv(index=False).encode('utf-8'), file_name=f'sales_data_filtered_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv', mime='text/csv')
+            st.download_button("📥 Download Filtered Data", filtered_df.to_csv(index=False).encode('utf-8'), file_name=f'banking_data_filtered_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv', mime='text/csv')
     with col2:
-        st.download_button("📥 Download Full Dataset", df.to_csv(index=False).encode('utf-8'), file_name=f'sales_data_full_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv', mime='text/csv')
+        st.download_button("📥 Download Full Dataset", df.to_csv(index=False).encode('utf-8'), file_name=f'banking_data_full_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv', mime='text/csv')
+
+    if st.sidebar.checkbox("Show Raw Data"):
+        st.markdown("### 📄 Raw Data Preview")
+        if len(filtered_df) > 0:
+            st.dataframe(filtered_df, use_container_width=True, height=300)
+        else:
+            st.info("No data to display with current filters")
 
     if len(filtered_df) > 0:
         create_visualizations(filtered_df)
@@ -259,7 +267,9 @@ def main():
         st.info(f"**Memory Usage:** {filtered_df.memory_usage(deep=True).sum() / 1024**2:.2f} MB")
 
     st.markdown("---")
-    st.markdown("""<div style="text-align: center; color: #666; margin-top: 2rem;"><p>Sales Analytics Dashboard v1.0</p></div>""", unsafe_allow_html=True)
+    st.markdown("""<div style="text-align: center; color: #666; margin-top: 2rem;">
+        <p>Sales Analytics Dashboard v1.0</p>
+    </div>""", unsafe_allow_html=True)
 
 # Run
 if __name__ == "__main__":
